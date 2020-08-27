@@ -19,7 +19,7 @@ MyShader::MyShader(QString VertexPath, QString FragmentPath)
 
 	if (f2.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
-		m_VertexSource = f2.readAll();
+		m_FragmentSource = f2.readAll();
 		f2.close();
 	}
 	else

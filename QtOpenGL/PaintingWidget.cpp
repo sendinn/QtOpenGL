@@ -66,7 +66,7 @@ PaintingWidget::~PaintingWidget() {
 */
 void PaintingWidget::initializeGL()
 {
-	m_shader = new MyShader("VertexSource", "FragmentSource");
+	m_shader = new MyShader("VertexSource.txt", "FragmentSource.txt");
 
 	QOpenGLFunctions *f = this->context()->functions();
 	f->glEnable(GL_DEPTH_TEST);   // ÈıÎ¬»æÍ¼µÄ¹Ø¼ü£¡
