@@ -5,11 +5,12 @@
 #include <QOpenGLFunctions>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLVertexArrayObject>
+#include <QOpenGLExtraFunctions>
 #include <QElapsedTimer>
 #include <QKeyEvent>
 #include <QWheelEvent>
 #include "MyShader.h"
-class PaintingWidget : public QOpenGLWidget
+class PaintingWidget : public QOpenGLWidget, public QOpenGLExtraFunctions
 {
 	Q_OBJECT
 public:
