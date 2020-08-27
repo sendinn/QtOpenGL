@@ -54,6 +54,13 @@ PaintingWidget::PaintingWidget(QWidget* parent) :
 	AuxZ = camera - world;
 	AuxX = QVector3D::crossProduct(AuxY, AuxZ);
 	AuxX.normalize();
+
+
+
+	QSurfaceFormat format;
+	format.setAlphaBufferSize(24);  //设置alpha缓冲大小
+	format.setVersion(3, 3);         //设置版本号
+	format.setSamples(10);          //设置重采样次数，用于反走样
 }
 PaintingWidget::~PaintingWidget() {
 
@@ -98,8 +105,10 @@ void PaintingWidget::initializeGL()
 void PaintingWidget::paintGL()
 {
 	QOpenGLFunctions *f = this->context()->functions();
-	f->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
 	f->glClearColor(0.0f, 0.2f, 0.0f, 1.0f);
+	f->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	m_vao->bind();
 	m_shader->GetShader()->bind();
 	QMatrix4x4 mvp;

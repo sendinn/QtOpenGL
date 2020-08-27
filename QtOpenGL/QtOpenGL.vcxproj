@@ -89,14 +89,10 @@
     <QtRcc Include="QtOpenGL.qrc" />
     <QtUic Include="QtOpenGL.ui" />
     <QtMoc Include="QtOpenGL.h" />
-    <ClCompile Include="myglwidget.cpp" />
     <ClCompile Include="MyShader.cpp" />
     <ClCompile Include="PaintingWidget.cpp" />
     <ClCompile Include="QtOpenGL.cpp" />
     <ClCompile Include="main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <QtMoc Include="myglwidget.h" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="PaintingWidget.h" />

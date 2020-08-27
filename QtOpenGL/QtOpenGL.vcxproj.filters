@@ -47,9 +47,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="myglwidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PaintingWidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -58,9 +55,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="myglwidget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="PaintingWidget.h">
       <Filter>Header Files</Filter>
     </QtMoc>
