@@ -28,6 +28,9 @@
     <Filter Include="着色器">
       <UniqueIdentifier>{34bdcbb9-5c7e-4b84-96b6-0de0ce0c4bfc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="摄像机类">
+      <UniqueIdentifier>{f66c5606-38da-4a00-9580-6d5cf0e0f82f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="QtOpenGL.qrc">
@@ -53,6 +56,9 @@
     <ClCompile Include="MyShader.cpp">
       <Filter>着色器</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="PaintingWidget.h">
@@ -62,6 +68,9 @@
   <ItemGroup>
     <ClInclude Include="MyShader.h">
       <Filter>着色器</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
