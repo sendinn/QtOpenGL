@@ -51,7 +51,7 @@ private:
 	QPoint m_OldPoint;
 	QPoint m_NewPoint;
 
-	QMatrix4x4 model;
+	
 
 	QTimer timer;
 	Camera m_Camera;

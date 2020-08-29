@@ -1,15 +1,18 @@
 #include "Camera.h"
-
+#include <QtMath>
+#define Radian(x) (M_PI*(x)/180.0)
 Camera::Camera()
-	: m_CameraPos(QVector3D(-3.0f,0.0f,0.0f))
+	: m_CameraPos(QVector3D(0.0f,0.0f,3.0f))
 	, m_CameraTarget(QVector3D(0.0f, 0.0f, 0.0f))
-	, yaw(0.0)
+	, yaw(Radian(-90))
 	, pitch(0.0)
 	, sensitivity(0.01)
 {
 	//摄像机方向指向-z轴，所以这里要取正z轴需要从观察点指向摄像机
 	m_CameraZaxis = m_CameraPos - m_CameraTarget;
 	m_CameraFront = -m_CameraZaxis;
+	m_CameraRight = QVector3D::crossProduct({ 0.0f,1.0f,0.0f }, m_CameraZaxis); //up向量为世界坐标y轴，若交换位置则求得相机坐标-x轴
+	m_CameraUp = QVector3D::crossProduct(m_CameraZaxis, m_CameraRight);
 	distance = m_CameraFront.length();
 }
 
@@ -42,7 +45,7 @@ void Camera::UpdateFrontDirection()
 	direction.setY(sin(pitch));
 	direction.setX(cos(pitch)*cos(yaw));
 	direction.setZ(cos(pitch)*sin(yaw));
-	direction.normalize();
+	//direction.normalize();
 
 	m_CameraFront = direction * distance;
 }

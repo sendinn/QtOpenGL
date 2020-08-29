@@ -7,7 +7,6 @@ PaintingWidget::PaintingWidget(QWidget* parent) :
 	m_vao(nullptr), 
 	m_shader(nullptr)
 {
-	int a = 1;
 	const GLfloat VERTEX_INIT_DATA[] = {
 		//face 1
 		-0.5f, 0.0f, -0.2887f,
@@ -27,7 +26,7 @@ PaintingWidget::PaintingWidget(QWidget* parent) :
 		0.0f, 0.8165f, 0.0f,
 	};
 	const GLfloat COLOR_INIT_DATA[] = {
-		1.0f, 0.0f, 0.0f,
+		1.0f, 1.0f, 0.0f,
 		1.0f, 0.0f, 0.0f,
 		1.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f,
@@ -40,7 +39,12 @@ PaintingWidget::PaintingWidget(QWidget* parent) :
 		1.0f, 0.0f, 1.0f,
 		1.0f, 0.0f, 1.0f,
 	};
-	memcpy(this->vertexData, VERTEX_INIT_DATA, sizeof(this->vertexData));
+	const GLfloat VERTEX_INIT_DATA2[] = {
+		-0.5f, 0, 0,
+		0.5f, 0, 0,
+		0,0.7,0
+	};
+	memcpy(this->vertexData, VERTEX_INIT_DATA2, sizeof(this->vertexData));
 	memcpy(this->colorBuffer, COLOR_INIT_DATA, sizeof(this->colorBuffer));
 
 	setFocusPolicy(Qt::StrongFocus);
@@ -133,16 +137,19 @@ void PaintingWidget::paintGL()
 		QOpenGLVertexArrayObject::Binder{ m_vao }; //绑定VAO（不存在时创建），离开作用域自动解绑 ==》代替vao的creat bind，以及之后的release  
 		//m_vao->bind();
 
-
+		QMatrix4x4 model;
 		m_shader->GetShader()->setUniformValue("model", model);
 
+		QMatrix4x4 view;
+		view.lookAt(m_Camera.m_CameraPos, m_Camera.m_CameraPos + m_Camera.m_CameraFront, m_Camera.m_CameraUp);
+		m_shader->GetShader()->setUniformValue("view", view);
 
 		QMatrix4x4 projection;
 		//透视投影
-		projection.perspective(45.0f, width() / (float)height(), 0.1f, 100.0f);
+		projection.perspective(45.0f, width() / (float)height(), 0.1f, 10.0f);
 		m_shader->GetShader()->setUniformValue("projection", projection);
 
-#define test2
+#define test3
 
 #ifdef test1
 		float time = QTime::currentTime().msecsSinceStartOfDay() / 1000.0;
@@ -166,9 +173,16 @@ void PaintingWidget::paintGL()
 		*/
 
 		view.lookAt(m_Camera.m_CameraPos, m_Camera.m_CameraPos + m_Camera.m_CameraFront, m_Camera.GetCameraUp());
-		m_shader->GetShader()->setUniformValue("view", view);
+		//m_shader->GetShader()->setUniformValue("view", view);
 #endif
-		glDrawArrays(GL_TRIANGLES, 0, 4 * 3);
+
+		for (int i = 0; i < 10; ++i)
+		{
+			model.translate(QVector3D(0, -0.1, 0));
+			m_shader->GetShader()->setUniformValue("model", model);
+			glDrawArrays(GL_TRIANGLES, 0, 3);
+		}
+
 
 
 
@@ -214,11 +228,19 @@ void PaintingWidget::mouseMoveEvent(QMouseEvent *event)
 		dy *= 0.01;
 		m_Camera.yaw -= dx;
 		m_Camera.pitch -= dy;
-		m_Camera.UpdateFrontDirection();
+		if (m_Camera.pitch >= M_PI / 2)                          //将俯视角限制到[-90°,90°]
+			m_Camera.pitch = (M_PI) / 2 - 0.1;
+		if (m_Camera.pitch <= -M_PI / 2)
+			m_Camera.pitch = -(M_PI) / 2 + 0.1;
+
+		m_Camera.m_CameraFront.setY(sin(m_Camera.pitch));
+		m_Camera.m_CameraFront.setX(cos(m_Camera.pitch)*cos(m_Camera.yaw));
+		m_Camera.m_CameraFront.setZ(cos(m_Camera.pitch)*sin(m_Camera.yaw));
+
 	}
 	if (event->buttons() & Qt::RightButton)
 	{
-		model.translate(QVector3D(0.01, 0, 0));
+		//model.translate(QVector3D(0.01, 0, 0));
 	}
 	m_OldPoint = event->pos();
 }

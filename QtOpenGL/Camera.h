@@ -18,7 +18,7 @@ public:
 	double sensitivity;     //鼠标灵敏度
 	QVector3D m_CameraFront;//相机朝向
 
-private:
+
 	float distance;
 	QVector3D m_CameraZaxis;
 	QVector3D m_CameraRight;
