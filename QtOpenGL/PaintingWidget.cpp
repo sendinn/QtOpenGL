@@ -1,15 +1,11 @@
 #include "PaintingWidget.h"
 #include <qmath.h>
+#include <QTime>
 PaintingWidget::PaintingWidget(QWidget* parent) :
 	QOpenGLWidget(parent), 
 	m_vbo(nullptr), 
 	m_vao(nullptr), 
-	m_shader(nullptr), 
-	camera(0.0f, 3.0f, 0.0f),
-	world(0.0f,0.0f,0.0f),
-	camera_Up(0.0f,0.0f,1.0f),
-	AuxY(0.0f,1.0f,0.0f),
-	m_RotateAsix(0.0f, 0.0f, 1.0f)
+	m_shader(nullptr)
 {
 	int a = 1;
 	const GLfloat VERTEX_INIT_DATA[] = {
@@ -49,18 +45,17 @@ PaintingWidget::PaintingWidget(QWidget* parent) :
 
 	setFocusPolicy(Qt::StrongFocus);
 
-	m_zoom = 1;
-
-	AuxZ = camera - world;
-	AuxX = QVector3D::crossProduct(AuxY, AuxZ);
-	AuxX.normalize();
-
 
 
 	QSurfaceFormat format;
 	format.setAlphaBufferSize(24);  //设置alpha缓冲大小
 	format.setVersion(3, 3);         //设置版本号
 	format.setSamples(10);          //设置重采样次数，用于反走样
+
+	timer.setInterval(18);
+	//connect(&timer, &QTimer::timeout, this, static_cast<void (PaintingWidget::*)()>(&PaintingWidget::update));
+	timer.start();
+
 }
 PaintingWidget::~PaintingWidget() {
 
@@ -127,22 +122,60 @@ void PaintingWidget::paintGL()
 	glClearColor(0.0f, 0.2f, 0.0f, 1.0f);//设置清屏颜色
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//清除颜色缓存
 
-	/*
-	VAO的创建绑定与解绑是不是有点类似于线程锁，c++标准库中提供了lock_guard，它会在其构造函数中加锁，而在析构函数中解锁，而QOpenGLVertexArrayObject也提供了类似的机制，
-	QOpenGLVertexArrayObject::Binder创建一个用于管理绑定的对象
-	*/
-	QOpenGLVertexArrayObject::Binder{ m_vao }; //绑定VAO（不存在时创建），离开作用域自动解绑 ==》代替vao的creat bind，以及之后的release  
-	//m_vao->bind();
-	m_shader->GetShader()->bind();
-	QMatrix4x4 mvp;
-	mvp.perspective(45.0f, this->aspectRatio, 0.1f, 100.0f);
-	mvp.lookAt(camera, world, camera_Up);
 
-	mvp.rotate(10.0f, m_RotateAsix);
-	m_shader->GetShader()->setUniformValue(m_shader->GetShader()->uniformLocation("MVP"), mvp);
-	glDrawArrays(GL_TRIANGLES, 0, 4 * 3);
+	m_shader->GetShader()->bind();
+	{
+
+		/*
+		VAO的创建绑定与解绑是不是有点类似于线程锁，c++标准库中提供了lock_guard，它会在其构造函数中加锁，而在析构函数中解锁，而QOpenGLVertexArrayObject也提供了类似的机制，
+		QOpenGLVertexArrayObject::Binder创建一个用于管理绑定的对象
+		*/
+		QOpenGLVertexArrayObject::Binder{ m_vao }; //绑定VAO（不存在时创建），离开作用域自动解绑 ==》代替vao的creat bind，以及之后的release  
+		//m_vao->bind();
+
+
+		m_shader->GetShader()->setUniformValue("model", model);
+
+
+		QMatrix4x4 projection;
+		//透视投影
+		projection.perspective(45.0f, width() / (float)height(), 0.1f, 100.0f);
+		m_shader->GetShader()->setUniformValue("projection", projection);
+
+#define test2
+
+#ifdef test1
+		float time = QTime::currentTime().msecsSinceStartOfDay() / 1000.0;
+		QMatrix4x4 trans;
+		trans.translate(0.0f, 0.5*qAbs(qSin(time)), 0.0f);        //向y轴平移0.5*[0,1]
+		trans.scale(0.5*qAbs(qSin(time)), 0.5*qAbs(qSin(time))); //x，y在[0,0.5]进行缩放
+		trans.rotate(360 * time, 0.0f, 0.0f, -1.0f);                 //旋转360*time
+		m_shader->GetShader()->setUniformValue(m_shader->GetShader()->uniformLocation("MVP"), trans);
+#endif
+
+
+#ifdef test2
+		float time = QTime::currentTime().msecsSinceStartOfDay() / 1000.0;
+		QMatrix4x4 view;
+		float radius = 10.0f;
+		/*
+		m_CameraPos + QVector3D 表示点+看向的方向，始终看向正前方
+		view.lookAt(m_Camera.m_CameraPos, m_Camera.m_CameraPos + QVector3D(0,0,-1), m_Camera.GetCameraUp());
+		m_CameraPos + Direction 表示观察点，始终看向同一个点
+		view.lookAt(m_Camera.m_CameraPos, m_Camera.m_CameraPos - (m_Camera.m_CameraPos - QVector3D(0,0,-1)), m_Camera.GetCameraUp());
+		*/
+
+		view.lookAt(m_Camera.m_CameraPos, m_Camera.m_CameraPos + m_Camera.m_CameraFront, m_Camera.GetCameraUp());
+		m_shader->GetShader()->setUniformValue("view", view);
+#endif
+		glDrawArrays(GL_TRIANGLES, 0, 4 * 3);
+
+
+
+
+		//m_vao->release();
+	}
 	m_shader->GetShader()->release();
-	//m_vao->release();
 
 	update();
 }
@@ -166,26 +199,26 @@ void PaintingWidget::fillColorBuffer()
 
 void PaintingWidget::mouseMoveEvent(QMouseEvent *event)
 {
-	float dx = event->x() - m_OldPoint.x();
-	float dy = event->y() - m_OldPoint.y();
 
 	if (event->buttons() & Qt::LeftButton)
 	{
-		QVector3D MouseTrace = AuxY*dy + AuxX* dx;
-		m_RotateAsix = QVector3D::crossProduct(MouseTrace, AuxZ);
-		m_RotateAsix.normalize();
-
-		float angle = MouseTrace.length();
-		QMatrix4x4 m;
-		m.rotate(angle, m_RotateAsix);
-
-		camera = m * camera;
-		camera_Up = m * camera_Up;
-		camera_Up.normalize();
-		AuxY = camera_Up;
-		AuxZ = camera - world;
-		AuxX = QVector3D::crossProduct(AuxY, AuxZ);
-		AuxX.normalize();
+		static bool first = true;
+		if (first)
+		{
+			m_OldPoint = event->pos();
+			first = false;
+		}
+		float dx = event->x() - m_OldPoint.x();
+		float dy = m_OldPoint.y() - event->y();
+		dx *= 0.01;
+		dy *= 0.01;
+		m_Camera.yaw -= dx;
+		m_Camera.pitch -= dy;
+		m_Camera.UpdateFrontDirection();
+	}
+	if (event->buttons() & Qt::RightButton)
+	{
+		model.translate(QVector3D(0.01, 0, 0));
 	}
 	m_OldPoint = event->pos();
 }
@@ -199,13 +232,12 @@ void PaintingWidget::wheelEvent(QWheelEvent *event)
 {
 	if (event->delta() > 0)
 	{
-		m_zoom = 1.1;
+		m_Camera.m_CameraPos.setX(m_Camera.m_CameraPos.x() + 0.1f);
 	}
 	else
 	{
-		m_zoom = 0.9;
+		m_Camera.m_CameraPos.setX(m_Camera.m_CameraPos.x() - 0.1f);
 	}
-
 	update();
 }
 
@@ -213,22 +245,18 @@ void PaintingWidget::keyPressEvent(QKeyEvent *keyEvent)
 {
 	switch (keyEvent->key()) {
 	case Qt::Key_Right:
-		camera.setZ(camera.z() + 0.1f);
+		m_Camera.m_CameraPos.setX(m_Camera.m_CameraPos.x() - 0.1f);
 		break;
 	case Qt::Key_Left:
-		camera.setZ(camera.z() - 0.1f);
+		m_Camera.m_CameraPos.setX(m_Camera.m_CameraPos.x() + 0.1f);
 		break;
 	case Qt::Key_Up:
-		camera.setX(camera.x() + 0.1f);
+		m_Camera.m_CameraPos.setY(m_Camera.m_CameraPos.y() - 0.1f);
 		break;
 	case Qt::Key_Down:
-		camera.setX(camera.x() - 0.1f);
+		m_Camera.m_CameraPos.setX(m_Camera.m_CameraPos.y() + 0.1f);
 		break;
-	case Qt::Key_Plus:
-		camera.setY(camera.y() + 0.1f);
-		break;
-	case Qt::Key_Minus:
-		camera.setY(camera.y() - 0.1f);
+	default:
 		break;
 	}
 	update();

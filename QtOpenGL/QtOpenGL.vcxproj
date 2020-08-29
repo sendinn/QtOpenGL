@@ -89,6 +89,7 @@
     <QtRcc Include="QtOpenGL.qrc" />
     <QtUic Include="QtOpenGL.ui" />
     <QtMoc Include="QtOpenGL.h" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="MyShader.cpp" />
     <ClCompile Include="PaintingWidget.cpp" />
     <ClCompile Include="QtOpenGL.cpp" />
@@ -98,6 +99,7 @@
     <QtMoc Include="PaintingWidget.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="MyShader.h" />
   </ItemGroup>
   <ItemGroup>
