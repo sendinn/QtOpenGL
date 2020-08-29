@@ -11,7 +11,7 @@ PaintingWidget::PaintingWidget(QWidget* parent) :
 	AuxY(0.0f,1.0f,0.0f),
 	m_RotateAsix(0.0f, 0.0f, 1.0f)
 {
-
+	int a = 1;
 	const GLfloat VERTEX_INIT_DATA[] = {
 		//face 1
 		-0.5f, 0.0f, -0.2887f,
