@@ -36,7 +36,7 @@ MyShader::MyShader(QString VertexPath, QString FragmentPath)
 	{
 		qDebug() << "ERROR:" << m_Shader->log();    //如果编译出错,打印报错信息
 	}
-	if(m_Shader->addShaderFromSourceCode(QOpenGLShader::Fragment, m_FragmentSource))
+	if(!m_Shader->addShaderFromSourceCode(QOpenGLShader::Fragment, m_FragmentSource))
 	{
 		qDebug() << "ERROR:" << m_Shader->log();    //如果编译出错,打印报错信息
 	}

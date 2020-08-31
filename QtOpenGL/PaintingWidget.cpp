@@ -1,47 +1,53 @@
 #include "PaintingWidget.h"
 #include <qmath.h>
 #include <QTime>
+
+
+GLfloat VERTEX_INIT_DATA2[] = {
+	-0.5f, 0, 0,
+	0.5f, 0, 0,
+	0,0.7,0
+};
+
+GLfloat VERTEX_INIT_DATA[] = {
+	//face 1
+	-0.5f, 0.0f, -0.2887f,
+	0.5f, 0.0f, -0.2887f,
+	0.0f, 0.0f, 0.5774f,
+	//face 2
+	-0.5f, 0.0f, -0.2887f,
+	0.5f, 0.0f, -0.2887f,
+	0.0f, 0.8165f, 0.0f,
+	//face 3
+	-0.5f, 0.0f, -0.2887f,
+	0.0f, 0.0f, 0.5774f,
+	0.0f, 0.8165f, 0.0f,
+	//face 4
+	0.5f, 0.0f, -0.2887f,
+	0.0f, 0.0f, 0.5774f,
+	0.0f, 0.8165f, 0.0f,
+};
+
+GLfloat COLOR_INIT_DATA[] = {
+	1.0f, 1.0f, 0.0f,
+	1.0f, 0.0f, 0.0f,
+	1.0f, 0.0f, 0.0f,
+	0.0f, 1.0f, 0.0f,
+	0.0f, 1.0f, 0.0f,
+	0.0f, 1.0f, 0.0f,
+	0.0f, 0.0f, 1.0f,
+	0.0f, 0.0f, 1.0f,
+	0.0f, 0.0f, 1.0f,
+	1.0f, 0.0f, 1.0f,
+	1.0f, 0.0f, 1.0f,
+	1.0f, 0.0f, 1.0f,
+};
+
 PaintingWidget::PaintingWidget(QWidget* parent) :
 	QOpenGLWidget(parent), 
 	m_vbo(nullptr), 
-	m_vao(nullptr), 
-	m_shader(nullptr)
+	m_vao(nullptr)
 {
-
-	const GLfloat VERTEX_INIT_DATA[] = {
-		//face 1
-		-0.5f, 0.0f, -0.2887f,
-		0.5f, 0.0f, -0.2887f,
-		0.0f, 0.0f, 0.5774f,
-		//face 2
-		-0.5f, 0.0f, -0.2887f,
-		0.5f, 0.0f, -0.2887f,
-		0.0f, 0.8165f, 0.0f,
-		//face 3
-		-0.5f, 0.0f, -0.2887f,
-		0.0f, 0.0f, 0.5774f,
-		0.0f, 0.8165f, 0.0f,
-		//face 4
-		0.5f, 0.0f, -0.2887f,
-		0.0f, 0.0f, 0.5774f,
-		0.0f, 0.8165f, 0.0f,
-	};
-	const GLfloat COLOR_INIT_DATA[] = {
-		1.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f,
-		0.0f, 1.0f, 0.0f,
-		0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 1.0f,
-	};
-	memcpy(this->vertexData, VERTEX_INIT_DATA, sizeof(this->vertexData));
-	memcpy(this->colorBuffer, COLOR_INIT_DATA, sizeof(this->colorBuffer));
 
 	setFocusPolicy(Qt::StrongFocus);
 
@@ -56,6 +62,12 @@ PaintingWidget::PaintingWidget(QWidget* parent) :
 	//connect(&timer, &QTimer::timeout, this, static_cast<void (PaintingWidget::*)()>(&PaintingWidget::update));
 	timer.start();
 
+
+
+
+	setMouseTracking(true);         //开启鼠标追踪：Qt默认不会实时监控鼠标移动
+
+	//QCursor::setPos(geometry().center());   //设置鼠标位置为窗口矩形区域的中心
 }
 PaintingWidget::~PaintingWidget() {
 
@@ -68,47 +80,16 @@ PaintingWidget::~PaintingWidget() {
 */
 void PaintingWidget::initializeGL()
 {
-	initializeOpenGLFunctions();//初始化opengl函数
-	//QOpenGLFunctions *f = this->context()->functions();
-
-	m_shader = new MyShader("VertexSource.txt", "FragmentSource.txt");
-	
+	initializeOpenGLFunctions();//初始化opengl函数	
 	glEnable(GL_DEPTH_TEST);   // 三维绘图的关键！
 
-	m_vao = new QOpenGLVertexArrayObject();
-	m_vbo = new QOpenGLBuffer(QOpenGLBuffer::Type::VertexBuffer);
-	m_cbo = new QOpenGLBuffer(QOpenGLBuffer::Type::VertexBuffer);
-	QOpenGLVertexArrayObject::Binder{ m_vao };
-	//m_vao->create();
-	//m_vao->bind();
-	m_vbo->create();//生成VBO对象
-	m_vbo->bind();//将VBO绑定到当前的顶点缓冲对象（QOpenGLBuffer::VertexBuffer）中
-	m_vbo->allocate(this->vertexData, 4 * 3 * 3 * sizeof(GLfloat));//将顶点数据分配到VBO中，第一个参数为数据指针，第二个参数为数据的字节长度
+// 	m_Mesh = new Mesh();
+// 	m_Mesh->SetVertex(VERTEX_INIT_DATA2, 3);
+// 	m_Mesh->SetColor(COLOR_INIT_DATA, 12);
+// 	m_Mesh->SetupMesh();
 
-	/*
-	第一个参数指定我们要配置的顶点属性。顶点着色器中使用layout(location = 0)定义了position顶点属性的位置值(Location)，它可以把顶点属性的位置值设置为0。因为我们希望把数据传递到这一个顶点属性中，所以这里我们传入0。
-	第二个参数指定数据的类型，这里是GL_FLOAT(GLSL中vec*都是由浮点数值组成的)。
-	第三个参数表示位置数据在缓冲中起始位置的偏移量(Offset)。由于位置数据在数组的开头，所以这里是0。
-	第四个参数指定顶点属性的大小。顶点属性是一个vec3，它由3个值组成，所以大小是3。
-	第五个参数叫做步长(Stride)，它告诉我们在连续的顶点属性组之间的间隔。由于下个组位置数据在3个float之后，我们把步长设置为3 * sizeof(GLfloat)。
-	*/
-	m_shader->GetShader()->setAttributeBuffer(0, GL_FLOAT, 0, 3, 3 * sizeof(GLfloat));
-	//f->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
-	m_shader->GetShader()->enableAttributeArray(0);
-	//f->glEnableVertexAttribArray(0);
-
-	m_vbo->release();
-	m_cbo->create();
-	m_cbo->bind();
-	m_cbo->allocate(this->colorBuffer, 4 * 3 * 3 * sizeof(GLfloat));
-
-	m_shader->GetShader()->setAttributeBuffer(1, GL_FLOAT, 0, 3, 3 * sizeof(GLfloat));
-	//f->glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
-	m_shader->GetShader()->enableAttributeArray(1);
-	//f->glEnableVertexAttribArray(1);
-	m_cbo->release();
-	//m_vao->release(); //解绑VAO，安全使用
-
+	Model model("D:\\Code\\QtOpenGL\\QtOpenGL\\nanosuit\\nanosuit.obj");
+	m_Meshes = model.GetMeshes();
 }
 
 
@@ -122,60 +103,71 @@ void PaintingWidget::paintGL()
 	glClearColor(0.0f, 0.2f, 0.0f, 1.0f);//设置清屏颜色
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//清除颜色缓存
 
-
-	m_shader->GetShader()->bind();
+	for (int i = 0; i < m_Meshes.size(); ++i)
 	{
+		m_Meshes[i]->GetShader()->bind();
+		{
 
-		/*
-		VAO的创建绑定与解绑是不是有点类似于线程锁，c++标准库中提供了lock_guard，它会在其构造函数中加锁，而在析构函数中解锁，而QOpenGLVertexArrayObject也提供了类似的机制，
-		QOpenGLVertexArrayObject::Binder创建一个用于管理绑定的对象
-		*/
-		QOpenGLVertexArrayObject::Binder{ m_vao }; //绑定VAO（不存在时创建），离开作用域自动解绑 ==》代替vao的creat bind，以及之后的release  
-		//m_vao->bind();
+			/*
+			VAO的创建绑定与解绑是不是有点类似于线程锁，c++标准库中提供了lock_guard，它会在其构造函数中加锁，而在析构函数中解锁，而QOpenGLVertexArrayObject也提供了类似的机制，
+			QOpenGLVertexArrayObject::Binder创建一个用于管理绑定的对象
+			*/
+			//QOpenGLVertexArrayObject::Binder{ m_vao }; //绑定VAO（不存在时创建），离开作用域自动解绑 ==》代替vao的creat bind，以及之后的release  
+			//m_vao->bind();
+
+			m_Model.setToIdentity();
+			m_Model.rotate(m_Rotate);
+			m_Meshes[i]->GetShader()->setUniformValue("model", m_Model);
 
 
-		m_shader->GetShader()->setUniformValue("model", model);
+			m_View.setToIdentity();
+			m_View.lookAt(m_Camera.m_CameraPos, m_Camera.m_CameraPos + m_Camera.m_CameraFront, m_Camera.m_CameraUp);
+			m_Meshes[i]->GetShader()->setUniformValue("view", m_View);
 
+			//透视投影
+			m_Projection.setToIdentity();
+			m_Projection.perspective(45.0f, width() / (float)height(), 0.1f, 10.0f);
+			m_Meshes[i]->GetShader()->setUniformValue("projection", m_Projection);
 
-		QMatrix4x4 projection;
-		//透视投影
-		projection.perspective(45.0f, width() / (float)height(), 0.1f, 100.0f);
-		m_shader->GetShader()->setUniformValue("projection", projection);
-
-#define test2
+#define test3
 
 #ifdef test1
-		float time = QTime::currentTime().msecsSinceStartOfDay() / 1000.0;
-		QMatrix4x4 trans;
-		trans.translate(0.0f, 0.5*qAbs(qSin(time)), 0.0f);        //向y轴平移0.5*[0,1]
-		trans.scale(0.5*qAbs(qSin(time)), 0.5*qAbs(qSin(time))); //x，y在[0,0.5]进行缩放
-		trans.rotate(360 * time, 0.0f, 0.0f, -1.0f);                 //旋转360*time
-		m_shader->GetShader()->setUniformValue(m_shader->GetShader()->uniformLocation("MVP"), trans);
+			float time = QTime::currentTime().msecsSinceStartOfDay() / 1000.0;
+			QMatrix4x4 trans;
+			trans.translate(0.0f, 0.5*qAbs(qSin(time)), 0.0f);        //向y轴平移0.5*[0,1]
+			trans.scale(0.5*qAbs(qSin(time)), 0.5*qAbs(qSin(time))); //x，y在[0,0.5]进行缩放
+			trans.rotate(360 * time, 0.0f, 0.0f, -1.0f);                 //旋转360*time
+			m_shader->GetShader()->setUniformValue(m_shader->GetShader()->uniformLocation("MVP"), trans);
 #endif
 
 
 #ifdef test2
-		float time = QTime::currentTime().msecsSinceStartOfDay() / 1000.0;
-		QMatrix4x4 view;
-		float radius = 10.0f;
-		/*
-		m_CameraPos + QVector3D 表示点+看向的方向，始终看向正前方
-		view.lookAt(m_Camera.m_CameraPos, m_Camera.m_CameraPos + QVector3D(0,0,-1), m_Camera.GetCameraUp());
-		m_CameraPos + Direction 表示观察点，始终看向同一个点
-		view.lookAt(m_Camera.m_CameraPos, m_Camera.m_CameraPos - (m_Camera.m_CameraPos - QVector3D(0,0,-1)), m_Camera.GetCameraUp());
-		*/
+			float time = QTime::currentTime().msecsSinceStartOfDay() / 1000.0;
+			QMatrix4x4 view;
+			float radius = 10.0f;
+			/*
+			m_CameraPos + QVector3D 表示点+看向的方向，始终看向正前方
+			view.lookAt(m_Camera.m_CameraPos, m_Camera.m_CameraPos + QVector3D(0,0,-1), m_Camera.GetCameraUp());
+			m_CameraPos + Direction 表示观察点，始终看向同一个点
+			view.lookAt(m_Camera.m_CameraPos, m_Camera.m_CameraPos - (m_Camera.m_CameraPos - QVector3D(0,0,-1)), m_Camera.GetCameraUp());
+			*/
 
-		view.lookAt(m_Camera.m_CameraPos, m_Camera.m_CameraPos + m_Camera.m_CameraFront, m_Camera.GetCameraUp());
-		m_shader->GetShader()->setUniformValue("view", view);
+			view.lookAt(m_Camera.m_CameraPos, m_Camera.m_CameraPos + m_Camera.m_CameraFront, m_Camera.GetCameraUp());
+			//m_shader->GetShader()->setUniformValue("view", view);
 #endif
-		glDrawArrays(GL_TRIANGLES, 0, 4 * 3);
 
+#define USE_MESH
+#ifdef USE_MESH
+			m_Meshes[i]->Draw();
+#else
+			glDrawArrays(GL_TRIANGLES, 0, 3);
+#endif
 
-
-
-		//m_vao->release();
+			//m_vao->release();
+		}
+		m_Meshes[i]->GetShader()->release();
 	}
-	m_shader->GetShader()->release();
+
 
 	update();
 }
@@ -187,16 +179,9 @@ void PaintingWidget::resizeGL(int w, int h)
 	aspectRatio = (float)w / h;
 }
 
-
-void PaintingWidget::fillColorBuffer()
-{
-	GLfloat colorData[3 * 3];
-	for (int i = 0; i < 3; ++i) {
-		memcpy(&colorData[i * 3], this->colorBuffer, 3 * sizeof(GLfloat));
-	}
-	m_cbo->write(0, colorData, 3 * 3 * sizeof(GLfloat));
-}
-
+#define 正x轴 QVector3D(1.0f,0.0f,0.0f)
+#define 正y轴 QVector3D(0.0f,1.0f,0.0f)
+#define 四元数旋转
 void PaintingWidget::mouseMoveEvent(QMouseEvent *event)
 {
 
@@ -208,19 +193,48 @@ void PaintingWidget::mouseMoveEvent(QMouseEvent *event)
 			m_OldPoint = event->pos();
 			first = false;
 		}
+
+
+#ifdef 四元数旋转
+		float dx = event->x() - m_OldPoint.x();
+		float dy = event->y() - m_OldPoint.y();
+		dx *= 0.3;
+		dy *= 0.3;
+		QQuaternion xRotate, yRotate;
+
+		yRotate = QQuaternion::fromAxisAndAngle(正y轴, dx);
+		xRotate = QQuaternion::fromAxisAndAngle(正x轴, dy);
+
+
+		m_Rotate = yRotate * xRotate * m_Rotate;
+
+#endif
+
+#ifdef 欧拉角旋转
 		float dx = event->x() - m_OldPoint.x();
 		float dy = m_OldPoint.y() - event->y();
 		dx *= 0.01;
 		dy *= 0.01;
 		m_Camera.yaw -= dx;
 		m_Camera.pitch -= dy;
-		m_Camera.UpdateFrontDirection();
+		if (m_Camera.pitch >= M_PI / 2)                          //将俯视角限制到[-90°,90°]
+			m_Camera.pitch = (M_PI) / 2 - 0.1;
+		if (m_Camera.pitch <= -M_PI / 2)
+			m_Camera.pitch = -(M_PI) / 2 + 0.1;
+
+		m_Camera.m_CameraFront.setY(sin(m_Camera.pitch));
+		m_Camera.m_CameraFront.setX(cos(m_Camera.pitch)*cos(m_Camera.yaw));
+		m_Camera.m_CameraFront.setZ(cos(m_Camera.pitch)*sin(m_Camera.yaw));
+#endif
+
 	}
 	if (event->buttons() & Qt::RightButton)
 	{
-		model.translate(QVector3D(0.01, 0, 0));
+		//model.translate(QVector3D(0.01, 0, 0));
 	}
 	m_OldPoint = event->pos();
+
+	//QCursor::setPos(geometry().center());       //将鼠标复原到窗口中央
 }
 
 void PaintingWidget::mousePressEvent(QMouseEvent *event)
@@ -232,20 +246,23 @@ void PaintingWidget::wheelEvent(QWheelEvent *event)
 {
 	if (event->delta() > 0)
 	{
-		m_Camera.m_CameraPos.setX(m_Camera.m_CameraPos.x() + 0.1f);
+		m_Camera.m_CameraPos.setZ(m_Camera.m_CameraPos.z() - 0.1f);
 	}
 	else
 	{
-		m_Camera.m_CameraPos.setX(m_Camera.m_CameraPos.x() - 0.1f);
+		m_Camera.m_CameraPos.setZ(m_Camera.m_CameraPos.z() + 0.1f);
 	}
 	update();
 }
 
 void PaintingWidget::keyPressEvent(QKeyEvent *keyEvent)
 {
+	QQuaternion dr(QQuaternion::fromAxisAndAngle(QVector3D(0, 1, 0), 1));
 	switch (keyEvent->key()) {
 	case Qt::Key_Right:
-		m_Camera.m_CameraPos.setX(m_Camera.m_CameraPos.x() - 0.1f);
+		//m_Camera.m_CameraPos.setX(m_Camera.m_CameraPos.x() - 0.1f);	
+		m_Rotate = dr * m_Rotate;
+		m_View.rotate(10 ,QVector3D(0, 0, 1));
 		break;
 	case Qt::Key_Left:
 		m_Camera.m_CameraPos.setX(m_Camera.m_CameraPos.x() + 0.1f);
@@ -254,7 +271,7 @@ void PaintingWidget::keyPressEvent(QKeyEvent *keyEvent)
 		m_Camera.m_CameraPos.setY(m_Camera.m_CameraPos.y() - 0.1f);
 		break;
 	case Qt::Key_Down:
-		m_Camera.m_CameraPos.setX(m_Camera.m_CameraPos.y() + 0.1f);
+		m_Camera.m_CameraPos.setY(m_Camera.m_CameraPos.y() + 0.1f);
 		break;
 	default:
 		break;
@@ -262,13 +279,23 @@ void PaintingWidget::keyPressEvent(QKeyEvent *keyEvent)
 	update();
 }
 
+
+void PaintingWidget::fillColorBuffer()
+{
+	// 	GLfloat colorData[3 * 3];
+	// 	for (int i = 0; i < 3; ++i) {
+	// 		memcpy(&colorData[i * 3], this->colorBuffer, 3 * sizeof(GLfloat));
+	// 	}
+	// 	m_cbo->write(0, colorData, 3 * 3 * sizeof(GLfloat));
+}
+
 void PaintingWidget::setColor(GLfloat r, GLfloat g, GLfloat b)
 {
-	colorBuffer[0] = r;
-	colorBuffer[1] = g;
-	colorBuffer[2] = b;
-	m_cbo->bind();
-	fillColorBuffer();
-	m_cbo->release();
-	update();
+// 	colorBuffer[0] = r;
+// 	colorBuffer[1] = g;
+// 	colorBuffer[2] = b;
+// 	m_cbo->bind();
+// 	fillColorBuffer();
+// 	m_cbo->release();
+// 	update();
 }

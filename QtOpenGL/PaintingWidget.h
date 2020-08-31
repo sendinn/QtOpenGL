@@ -12,6 +12,8 @@
 #include <QWheelEvent>
 #include "MyShader.h"
 #include "Camera.h"
+#include "Mesh.h"
+#include "Model.h"
 class PaintingWidget : public QOpenGLWidget, public QOpenGLExtraFunctions
 {
 	Q_OBJECT
@@ -41,19 +43,24 @@ private:
 	QOpenGLVertexArrayObject *m_vao;  // VAO对象
 	QOpenGLBuffer *m_cbo;
 
-	MyShader	*m_shader;   // 渲染器程序对象
-
-	GLfloat colorBuffer[4 * 3 * 3];
-	GLfloat vertexData[4 * 3 * 3];
-
 	float aspectRatio;
 
 	QPoint m_OldPoint;
 	QPoint m_NewPoint;
 
-	QMatrix4x4 model;
+	
 
 	QTimer timer;
 	Camera m_Camera;
+
+	QMatrix4x4 m_Projection;
+	QMatrix4x4 m_Model;
+	QMatrix4x4 m_View;
+	QQuaternion m_Rotate;
+
+
+
+	//Mesh* m_Mesh;
+	QVector<Mesh*> m_Meshes;
 };
 
