@@ -59,7 +59,7 @@ private:
 	QQuaternion m_Rotate;
 
 
-
+	MyShader* m_Shader;
 	//Mesh* m_Mesh;
 	QVector<Mesh*> m_Meshes;
 };

@@ -1,6 +1,6 @@
 #include "Mesh.h"
 
-Mesh::Mesh()
+Mesh::Mesh(QOpenGLShaderProgram* shader):m_Shader(shader)
 {
 
 }
@@ -22,9 +22,7 @@ Mesh::~Mesh()
 
 void Mesh::SetupMesh()
 {
-	initializeOpenGLFunctions();//初始化opengl函数
-
-	m_Shader = new MyShader("VertexSource.txt", "FragmentSource.txt");
+	initializeOpenGLFunctions();//初始化opengl函数	
 
 	m_VAO = new QOpenGLVertexArrayObject();
 	m_VBO = new QOpenGLBuffer(QOpenGLBuffer::Type::VertexBuffer);
@@ -49,7 +47,7 @@ void Mesh::SetupMesh()
 		//将顶点数据分配到VBO中，第一个参数为数据指针，第二个参数为数据的字节长度
 		m_VBO->allocate(&m_Vertices[0], m_Vertices.size() * sizeof(ModelVertex));// 一定要写成&m_Vertices[0]才行，否则没有图片
 		//glBufferData(GL_ARRAY_BUFFER, m_Vertices.size() * sizeof(ModelVertex), &m_Vertices, GL_STATIC_DRAW); 亦可		
-		m_Shader->GetShader()->enableAttributeArray(0);
+		m_Shader->enableAttributeArray(0);
 		/*
 		第一个参数指定我们要配置的顶点属性。顶点着色器中使用layout(location = 0)定义了position顶点属性的位置值(Location)，它可以把顶点属性的位置值设置为0。因为我们希望把数据传递到这一个顶点属性中，所以这里我们传入0。
 		第二个参数指定数据的类型，这里是GL_FLOAT(GLSL中vec*都是由浮点数值组成的)。
@@ -57,7 +55,7 @@ void Mesh::SetupMesh()
 		第四个参数指定顶点属性的大小。顶点属性是一个vec3，它由3个值组成，所以大小是3。
 		第五个参数叫做步长(Stride)，它告诉我们在连续的顶点属性组之间的间隔。由于下个组位置数据在3个float之后，我们把步长设置为3 * sizeof(GLfloat)。
 		*/
-		m_Shader->GetShader()->setAttributeBuffer(0, GL_FLOAT, 0, 3, sizeof(ModelVertex));
+		m_Shader->setAttributeBuffer(0, GL_FLOAT, 0, 3, sizeof(ModelVertex));
 		/*
 		QOpenGLFunctions *f = this->context()->functions();
 		f->glEnableVertexAttribArray(0); 
@@ -83,8 +81,8 @@ void Mesh::SetupMesh()
 		m_CBO->create();
 		m_CBO->bind();
 		m_CBO->allocate(&m_Colors[0], m_Colors.size() * sizeof(vec3));
-		m_Shader->GetShader()->setAttributeBuffer(1, GL_FLOAT, 0, 3, sizeof(vec3));
-		m_Shader->GetShader()->enableAttributeArray(1);
+		m_Shader->setAttributeBuffer(1, GL_FLOAT, 0, 3, sizeof(vec3));
+		m_Shader->enableAttributeArray(1);
 		m_CBO->release();
 	}
 
@@ -108,7 +106,7 @@ void Mesh::Draw()
 			glBindTexture(GL_TEXTURE_2D, m_Textures[i].id);
 		}
 	}
-	glDrawArrays(GL_POINTS, 0, 3);
+	glDrawArrays(GL_TRIANGLES, 0, m_Vertices.size());
 
 }
  

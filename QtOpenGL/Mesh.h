@@ -41,7 +41,7 @@ struct ModelTexture
 class Mesh : public QOpenGLWidget, public QOpenGLExtraFunctions
 {
 public:
-	Mesh();
+	Mesh(QOpenGLShaderProgram* shader);
 	Mesh(QVector<ModelVertex>	vertices,QVector<ModelTexture>	textures,QVector<unsigned int>	indices);
 	~Mesh();
 
@@ -61,16 +61,12 @@ public:
 		memcpy(&(m_Colors[0]), colors, size * sizeof(vec3));
 	}
 
-	QOpenGLShaderProgram* GetShader() {
-		return m_Shader->GetShader();
-	}
-
 	QVector<ModelVertex>	m_Vertices;
 	QVector<ModelTexture>	m_Textures;
 	QVector<unsigned int>	m_Indices;
 	QVector<vec3>			m_Colors;
 private:
-	MyShader* m_Shader;
+	QOpenGLShaderProgram* m_Shader;
 
 	QOpenGLVertexArrayObject* m_VAO;
 	QOpenGLBuffer* m_VBO;//¶¥µã

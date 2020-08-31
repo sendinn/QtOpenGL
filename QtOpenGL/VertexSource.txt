@@ -9,5 +9,5 @@ uniform mat4 projection;
 out vec4 cols;
 void main() {
   gl_Position = projection * view * model  * vec4(posVertex, 1.0f);
-  cols = vec4(colVertex, 1.0f);
+  cols = vec4(1,0,0, 1.0f);
 }

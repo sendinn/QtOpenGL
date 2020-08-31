@@ -87,8 +87,9 @@ void PaintingWidget::initializeGL()
 // 	m_Mesh->SetVertex(VERTEX_INIT_DATA2, 3);
 // 	m_Mesh->SetColor(COLOR_INIT_DATA, 12);
 // 	m_Mesh->SetupMesh();
+	m_Shader = new MyShader("VertexSource.txt", "FragmentSource.txt");
 
-	Model model("D:\\Code\\QtOpenGL\\QtOpenGL\\nanosuit\\nanosuit.obj");
+	Model model("D:\\code\\QtOpenGL\\QtOpenGL\\nanosuit\\nanosuit.obj",m_Shader->GetShader());
 	m_Meshes = model.GetMeshes();
 }
 
@@ -103,9 +104,9 @@ void PaintingWidget::paintGL()
 	glClearColor(0.0f, 0.2f, 0.0f, 1.0f);//设置清屏颜色
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//清除颜色缓存
 
+	m_Shader->GetShader()->bind();
 	for (int i = 0; i < m_Meshes.size(); ++i)
 	{
-		m_Meshes[i]->GetShader()->bind();
 		{
 
 			/*
@@ -117,17 +118,17 @@ void PaintingWidget::paintGL()
 
 			m_Model.setToIdentity();
 			m_Model.rotate(m_Rotate);
-			m_Meshes[i]->GetShader()->setUniformValue("model", m_Model);
+			m_Shader->GetShader()->setUniformValue("model", m_Model);
 
 
 			m_View.setToIdentity();
 			m_View.lookAt(m_Camera.m_CameraPos, m_Camera.m_CameraPos + m_Camera.m_CameraFront, m_Camera.m_CameraUp);
-			m_Meshes[i]->GetShader()->setUniformValue("view", m_View);
+			m_Shader->GetShader()->setUniformValue("view", m_View);
 
 			//透视投影
 			m_Projection.setToIdentity();
 			m_Projection.perspective(45.0f, width() / (float)height(), 0.1f, 10.0f);
-			m_Meshes[i]->GetShader()->setUniformValue("projection", m_Projection);
+			m_Shader->GetShader()->setUniformValue("projection", m_Projection);
 
 #define test3
 
@@ -165,9 +166,8 @@ void PaintingWidget::paintGL()
 
 			//m_vao->release();
 		}
-		m_Meshes[i]->GetShader()->release();
 	}
-
+	m_Shader->GetShader()->release();
 
 	update();
 }

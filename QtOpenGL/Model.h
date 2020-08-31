@@ -7,7 +7,7 @@
 class Model
 {
 public:
-	Model(QString const& path);
+	Model(QString const& path, QOpenGLShaderProgram* shader);
 	~Model();
 
 	Mesh* processMesh(aiMesh *mesh, const aiScene *scene);
@@ -21,7 +21,7 @@ public:
 	QVector<ModelVertex>	m_Vertices;
 
 
-
+	QOpenGLShaderProgram* m_ProgramShader;
 	QVector<Mesh*>	m_Meshes;
 	QString m_Directory;
 };

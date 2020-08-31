@@ -1,7 +1,7 @@
 #include "Model.h"
 
 
-Model::Model(QString const& path)
+Model::Model(QString const& path, QOpenGLShaderProgram* shader):m_ProgramShader(shader)
 {
 	LoadModel(path);
 }
@@ -13,13 +13,13 @@ Model::~Model()
 
 Mesh* Model::processMesh(aiMesh *mesh, const aiScene *scene)
 {
-	Mesh* tmp = new Mesh();
+	Mesh* tmp = new Mesh(m_ProgramShader);
 	for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
 	{
 		ModelVertex vertex;
-		vertex.Position.x = mesh->mVertices[i].x;
-		vertex.Position.y = mesh->mVertices[i].y;
-		vertex.Position.z = mesh->mVertices[i].z;
+		vertex.Position.x = mesh->mVertices[i].x / 100.0;
+		vertex.Position.y = mesh->mVertices[i].y / 100.0;
+		vertex.Position.z = mesh->mVertices[i].z / 100.0;
 		tmp->m_Vertices.push_back(vertex);
 	}
 	tmp->SetupMesh();
@@ -45,6 +45,26 @@ void Model::processNode(aiNode *node, const aiScene *scene)
 
 void Model::LoadModel(QString const& path)
 {
+#ifdef TEST
+	GLfloat VERTEX_INIT_DATA2[] = {
+	-0.5f, 0, 0,
+	0.5f, 0, 0,
+	0,0.7,0
+	};
+	Mesh* tmp = new Mesh(m_ProgramShader);
+	for (unsigned int i = 0; i < 3; ++i)
+	{
+		ModelVertex vertex;
+		vertex.Position.x = VERTEX_INIT_DATA2[i*3+0];
+		vertex.Position.y = VERTEX_INIT_DATA2[i*3+1];
+		vertex.Position.z = VERTEX_INIT_DATA2[i*3+2];
+		tmp->m_Vertices.push_back(vertex);
+	}
+	tmp->SetupMesh();
+	m_Meshes.push_back(tmp);
+	return;
+#endif
+
 	Assimp::Importer import;
 	const aiScene *scene = import.ReadFile(path.toStdString(), aiProcess_Triangulate | aiProcess_FlipUVs);//三角化(因为draw的方式是三角形)、UV翻转(坐标)、
 
