@@ -14,14 +14,27 @@ Model::~Model()
 Mesh* Model::processMesh(aiMesh *mesh, const aiScene *scene)
 {
 	Mesh* tmp = new Mesh(m_ProgramShader);
-	for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
-	{
+// 	for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
+// 	{
+// 		ModelVertex vertex;
+// 		vertex.Position.x = mesh->mVertices[i].x / 100.0;
+// 		vertex.Position.y = mesh->mVertices[i].y / 100.0;
+// 		vertex.Position.z = mesh->mVertices[i].z / 100.0;
+// 		tmp->m_Vertices.push_back(vertex);
+// 	}
 		ModelVertex vertex;
-		vertex.Position.x = mesh->mVertices[i].x / 100.0;
-		vertex.Position.y = mesh->mVertices[i].y / 100.0;
-		vertex.Position.z = mesh->mVertices[i].z / 100.0;
+		vertex.Position.x = -0.5;
+		vertex.Position.y = 0;
+		vertex.Position.z = 0;
 		tmp->m_Vertices.push_back(vertex);
-	}
+		vertex.Position.x = 0.5;
+		vertex.Position.y = 0;
+		vertex.Position.z = 0;
+		tmp->m_Vertices.push_back(vertex);
+		vertex.Position.x = 0;
+		vertex.Position.y = 0.5;
+		vertex.Position.z = 0;
+		tmp->m_Vertices.push_back(vertex);
 	tmp->SetupMesh();
 	return tmp;
 }
