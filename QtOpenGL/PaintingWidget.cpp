@@ -121,7 +121,7 @@ void PaintingWidget::paintGL()
 			//旋转中心向右x轴正方向偏移0.5
 			m_Model.translate(QVector3D(0.5,0,0));
 			m_Model.rotate(m_Rotate);
-			m_Model.translate(QVector3D(-0.5,0,0));
+			m_Model.translate(-QVector3D(0.5,0,0));
 			m_Shader->GetShader()->setUniformValue("model", m_Model);
 
 
