@@ -21,13 +21,6 @@ Camera::~Camera()
 
 }
 
-QVector3D Camera::GetCameraUp()
-{
-	m_CameraRight = QVector3D::crossProduct({ 0.0f,1.0f,0.0f }, m_CameraZaxis); //up向量为世界坐标y轴，若交换位置则求得相机坐标-x轴
-	m_CameraUp = QVector3D::crossProduct(m_CameraZaxis, m_CameraRight);
-	return m_CameraUp;
-}
-
 void Camera::UpdateFrontDirection()
 {
 	QVector3D direction;

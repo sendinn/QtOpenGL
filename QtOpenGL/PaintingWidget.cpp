@@ -46,7 +46,8 @@ GLfloat COLOR_INIT_DATA[] = {
 PaintingWidget::PaintingWidget(QWidget* parent) :
 	QOpenGLWidget(parent), 
 	m_vbo(nullptr), 
-	m_vao(nullptr)
+	m_vao(nullptr),
+	m_Center(0,0,0)
 {
 
 	setFocusPolicy(Qt::StrongFocus);
@@ -117,21 +118,23 @@ void PaintingWidget::paintGL()
 			//m_vao->bind();
 
 			m_Model.setToIdentity();
-
 			//旋转中心向右x轴正方向偏移0.5
-			m_Model.translate(QVector3D(0.5,0,0));
+			//m_Model.translate(m_Center);
 			m_Model.rotate(m_Rotate);
-			m_Model.translate(-QVector3D(0.5,0,0));
+			m_Model.translate(-m_Center);
 			m_Shader->GetShader()->setUniformValue("model", m_Model);
 
 
 			m_View.setToIdentity();
-			m_View.lookAt(m_Camera.m_CameraPos, m_Camera.m_CameraPos + m_Camera.m_CameraFront, m_Camera.m_CameraUp);
+			//m_View.lookAt(m_Camera.m_CameraPos, m_Camera.m_CameraPos + m_Camera.m_CameraFront, QVector3D(0,-1,0));
+			m_View.lookAt(m_Camera.m_CameraPos, QVector3D(0,0,0), QVector3D(0, 1, 0));
 			m_Shader->GetShader()->setUniformValue("view", m_View);
 
 			//透视投影
 			m_Projection.setToIdentity();
-			m_Projection.perspective(45.0f, width() / (float)height(), 0.1f, 10.0f);
+			//m_Projection.perspective(45.0f, width() / (float)height(), 0.1f, 10.0f);
+			float ScaleOrtho = 0.006;
+			m_Projection.ortho(-width()/2* ScaleOrtho,width()/2.0* ScaleOrtho,-height()/2.0* ScaleOrtho,height()/2.0* ScaleOrtho, -10.0f, 10.0f);
 			m_Shader->GetShader()->setUniformValue("projection", m_Projection);
 
 #define test3
@@ -277,29 +280,14 @@ void PaintingWidget::keyPressEvent(QKeyEvent *keyEvent)
 	case Qt::Key_Down:
 		m_Camera.m_CameraPos.setY(m_Camera.m_CameraPos.y() + 0.1f);
 		break;
+	case Qt::Key_A:
+		m_Center = QVector3D(0, 0, 0);
+		break;
+	case Qt::Key_D:
+		m_Center = QVector3D(0.5, 0, 0);
+		break;
 	default:
 		break;
 	}
 	update();
-}
-
-
-void PaintingWidget::fillColorBuffer()
-{
-	// 	GLfloat colorData[3 * 3];
-	// 	for (int i = 0; i < 3; ++i) {
-	// 		memcpy(&colorData[i * 3], this->colorBuffer, 3 * sizeof(GLfloat));
-	// 	}
-	// 	m_cbo->write(0, colorData, 3 * 3 * sizeof(GLfloat));
-}
-
-void PaintingWidget::setColor(GLfloat r, GLfloat g, GLfloat b)
-{
-// 	colorBuffer[0] = r;
-// 	colorBuffer[1] = g;
-// 	colorBuffer[2] = b;
-// 	m_cbo->bind();
-// 	fillColorBuffer();
-// 	m_cbo->release();
-// 	update();
 }
