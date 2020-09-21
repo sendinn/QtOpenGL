@@ -30,8 +30,6 @@ protected:
 
 	
 public:
-	void setColor(GLfloat r, GLfloat g, GLfloat b);
-	void fillColorBuffer();
 
 	void mouseMoveEvent(QMouseEvent *event);
 	void mousePressEvent(QMouseEvent *event);
@@ -64,5 +62,9 @@ private:
 	MyShader* m_Shader;
 	//Mesh* m_Mesh;
 	QVector<Mesh*> m_Meshes;
+
+
+
+	QVector3D m_Center;
 };
 

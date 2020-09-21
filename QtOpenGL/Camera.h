@@ -6,8 +6,6 @@ public:
 	Camera();
 	~Camera();
 
-	QVector3D GetCameraUp();
-
 	void UpdateFrontDirection(); //更新摄像机朝向
 public:
 	QVector3D m_CameraPos;
