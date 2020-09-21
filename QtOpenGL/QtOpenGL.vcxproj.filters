@@ -77,6 +77,9 @@
     <ClCompile Include="Model.cpp">
       <Filter>导入模型</Filter>
     </ClCompile>
+    <ClCompile Include="MyMatrix.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="PaintingWidget.h">
@@ -101,6 +104,9 @@
     </ClInclude>
     <ClInclude Include="Model.h">
       <Filter>导入模型</Filter>
+    </ClInclude>
+    <ClInclude Include="MyMatrix.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

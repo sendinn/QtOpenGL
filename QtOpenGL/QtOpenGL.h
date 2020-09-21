@@ -19,5 +19,4 @@ private:
 	QVBoxLayout *m_layout;
 	PaintingWidget *m_painting;
 
-
 };

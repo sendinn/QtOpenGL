@@ -96,6 +96,7 @@
   <ItemGroup>
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="MyMatrix.cpp" />
     <ClCompile Include="TrackBall\ArcBall.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
@@ -118,6 +119,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="MyMatrix.h" />
     <ClInclude Include="MyShader.h" />
     <ClInclude Include="TrackBall\ArcBall.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

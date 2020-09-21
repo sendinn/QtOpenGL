@@ -63,8 +63,5 @@ private:
 	//Mesh* m_Mesh;
 	QVector<Mesh*> m_Meshes;
 
-
-
-	QVector3D m_Center;
 };
 

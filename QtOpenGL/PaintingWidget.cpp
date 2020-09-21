@@ -298,24 +298,3 @@ void PaintingWidget::keyPressEvent(QKeyEvent *keyEvent)
 	}
 	update();
 }
-
-
-void PaintingWidget::fillColorBuffer()
-{
-	// 	GLfloat colorData[3 * 3];
-	// 	for (int i = 0; i < 3; ++i) {
-	// 		memcpy(&colorData[i * 3], this->colorBuffer, 3 * sizeof(GLfloat));
-	// 	}
-	// 	m_cbo->write(0, colorData, 3 * 3 * sizeof(GLfloat));
-}
-
-void PaintingWidget::setColor(GLfloat r, GLfloat g, GLfloat b)
-{
-// 	colorBuffer[0] = r;
-// 	colorBuffer[1] = g;
-// 	colorBuffer[2] = b;
-// 	m_cbo->bind();
-// 	fillColorBuffer();
-// 	m_cbo->release();
-// 	update();
-}

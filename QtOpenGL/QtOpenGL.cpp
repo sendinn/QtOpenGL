@@ -1,5 +1,6 @@
 #include "QtOpenGL.h"
 #include <QComboBox>
+#include "MyMatrix.h"
 QtOpenGL::QtOpenGL(QWidget *parent)
     : QWidget(parent)
 {
@@ -12,4 +13,5 @@ QtOpenGL::QtOpenGL(QWidget *parent)
 	m_painting = new PaintingWidget(this);
 	m_layout->addWidget(m_painting);
 
+	MyMatrix t;
 }
