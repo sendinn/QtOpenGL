@@ -1,8 +1,8 @@
 #include "PaintingWidget.h"
 #include <qmath.h>
 #include <QTime>
-
-
+#include <iostream>
+using namespace std;
 GLfloat VERTEX_INIT_DATA2[] = {
 	-0.5f, 0, 0,
 	0.5f, 0, 0,
@@ -46,7 +46,9 @@ GLfloat COLOR_INIT_DATA[] = {
 PaintingWidget::PaintingWidget(QWidget* parent) :
 	QOpenGLWidget(parent), 
 	m_vbo(nullptr), 
-	m_vao(nullptr)
+	m_vao(nullptr),
+	m_Offset(0,0,0),
+	m_Center(0,0,0)
 {
 
 	setFocusPolicy(Qt::StrongFocus);
@@ -62,7 +64,8 @@ PaintingWidget::PaintingWidget(QWidget* parent) :
 	//connect(&timer, &QTimer::timeout, this, static_cast<void (PaintingWidget::*)()>(&PaintingWidget::update));
 	timer.start();
 
-
+	m_Offset = QVector3D(0, 0, 0);
+	m_Rotate = QQuaternion::fromAxisAndAngle(QVector3D(3,45,56),0);
 
 
 	setMouseTracking(true);         //开启鼠标追踪：Qt默认不会实时监控鼠标移动
@@ -118,10 +121,16 @@ void PaintingWidget::paintGL()
 
 			m_Model.setToIdentity();
 
+			m_Model.translate(m_Offset);
+
 			//旋转中心向右x轴正方向偏移0.5
-			m_Model.translate(QVector3D(0.5,0,0));
+			m_Model.translate(m_Center);
 			m_Model.rotate(m_Rotate);
-			m_Model.translate(-QVector3D(0.5,0,0));
+			float theta; QVector3D aisx;
+			m_Rotate.getAxisAndAngle(&aisx, &theta);
+			cout << "angle:"<<theta << endl;
+			cout << " x:" << aisx.x() << " y:" << aisx.y() << " z:" << aisx.z() << endl;
+			m_Model.translate(-m_Center);
 			m_Shader->GetShader()->setUniformValue("model", m_Model);
 
 
@@ -132,6 +141,7 @@ void PaintingWidget::paintGL()
 			//透视投影
 			m_Projection.setToIdentity();
 			m_Projection.perspective(45.0f, width() / (float)height(), 0.1f, 10.0f);
+			//m_Projection.ortho(-this->width() / 2 * aspectRatio,this->width() / 2 * aspectRatio, -this->height() / 2 * aspectRatio, this->height() / 2 * aspectRatio,-200.0f, 200.0f);
 			m_Shader->GetShader()->setUniformValue("projection", m_Projection);
 
 #define test3
@@ -209,8 +219,8 @@ void PaintingWidget::mouseMoveEvent(QMouseEvent *event)
 		yRotate = QQuaternion::fromAxisAndAngle(正y轴, dx);
 		xRotate = QQuaternion::fromAxisAndAngle(正x轴, dy);
 
-
-		m_Rotate = yRotate * xRotate * m_Rotate;
+		
+		m_Rotate = yRotate * m_Rotate ;
 
 #endif
 
@@ -276,6 +286,12 @@ void PaintingWidget::keyPressEvent(QKeyEvent *keyEvent)
 		break;
 	case Qt::Key_Down:
 		m_Camera.m_CameraPos.setY(m_Camera.m_CameraPos.y() + 0.1f);
+		break;
+	case Qt::Key_S:
+		m_Center = QVector3D(0, 0, 0);
+		break;
+	case Qt::Key_D:
+		m_Center = QVector3D(0.5, 0, 0);
 		break;
 	default:
 		break;

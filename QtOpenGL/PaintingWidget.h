@@ -58,6 +58,8 @@ private:
 	QMatrix4x4 m_View;
 	QQuaternion m_Rotate;
 
+	QVector3D m_Offset;
+	QVector3D m_Center;
 
 	MyShader* m_Shader;
 	//Mesh* m_Mesh;
