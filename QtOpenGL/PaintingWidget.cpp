@@ -123,14 +123,17 @@ void PaintingWidget::paintGL()
 
 			m_Model.translate(m_Offset);
 
+			m_Shader->GetShader()->setUniformValue("rotatePos", QVector3D(1,0,0));
+
+			m_Shader->GetShader()->setUniformValue("model", m_Model);
 			//旋转中心向右x轴正方向偏移0.5
-			m_Model.translate(m_Center);
-			m_Model.rotate(m_Rotate);
-			float theta; QVector3D aisx;
-			m_Rotate.getAxisAndAngle(&aisx, &theta);
-			cout << "angle:"<<theta << endl;
-			cout << " x:" << aisx.x() << " y:" << aisx.y() << " z:" << aisx.z() << endl;
-			m_Model.translate(-m_Center);
+// 			m_Model.translate(m_Center);
+ 			m_Model.rotate(m_Rotate);
+// 			float theta; QVector3D aisx;
+// 			m_Rotate.getAxisAndAngle(&aisx, &theta);
+// 			cout << "angle:"<<theta << endl;
+// 			cout << " x:" << aisx.x() << " y:" << aisx.y() << " z:" << aisx.z() << endl;
+// 			m_Model.translate(-m_Center);
 			m_Shader->GetShader()->setUniformValue("model", m_Model);
 
 

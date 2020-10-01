@@ -34,6 +34,7 @@ void MyMatrix::test()
 {
 	QMatrix4x4 mat;
 	QQuaternion dr;
+	dr = QQuaternion::fromAxisAndAngle(QVector3D(0, 0, 1), 90);
 
 	std::vector<QVector3D> line;
 	line.push_back(QVector3D(-1, 0, 0));
@@ -41,26 +42,26 @@ void MyMatrix::test()
 
 	mat.translate(QVector3D(0, 1, 0));
 
-	mat.rotate(90, QVector3D(0, 0, 1));
-
+	//mat.rotate(90, QVector3D(0, 0, 1));
+	mat.rotate(dr);
 	mat.translate(QVector3D(0, -1, 0));
 	
 	QMatrix4x4 rm = rot_mat(QVector3D(0, 0, 1), QVector3D(1, 0, 0), 90);
 
-
-
-
-
-
 	for (auto& one : line)
 	{
-		one = rm * one;
+		one = mat * one;
 	}
-
-
 
 	while (true)
 	{
 
 	}
+
+
+
+
+
+
+
 }
