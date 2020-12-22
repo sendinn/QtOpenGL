@@ -53,11 +53,6 @@ void MyMatrix::test()
 		one = mat * one;
 	}
 
-	while (true)
-	{
-
-	}
-
 
 
 

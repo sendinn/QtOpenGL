@@ -5,8 +5,6 @@ VisualStudioVersion = 15.0.28307.1231
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QtOpenGL", "QtOpenGL\QtOpenGL.vcxproj", "{BDE856DA-9FD3-42A6-84FE-9C388EBC02E3}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "转就对了", "转就对了\转就对了.vdproj", "{74F0C9C3-2D4E-46EB-8140-47342E97594C}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -17,8 +15,6 @@ Global
 		{BDE856DA-9FD3-42A6-84FE-9C388EBC02E3}.Debug|x64.Build.0 = Debug|x64
 		{BDE856DA-9FD3-42A6-84FE-9C388EBC02E3}.Release|x64.ActiveCfg = Release|x64
 		{BDE856DA-9FD3-42A6-84FE-9C388EBC02E3}.Release|x64.Build.0 = Release|x64
-		{74F0C9C3-2D4E-46EB-8140-47342E97594C}.Debug|x64.ActiveCfg = Debug
-		{74F0C9C3-2D4E-46EB-8140-47342E97594C}.Release|x64.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

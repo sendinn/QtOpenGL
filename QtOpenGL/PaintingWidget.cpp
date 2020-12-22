@@ -126,19 +126,25 @@ void PaintingWidget::paintGL()
 			m_Shader->GetShader()->setUniformValue("rotatePos", QVector3D(1,0,0));
 
 			m_Shader->GetShader()->setUniformValue("model", m_Model);
+
+			//旋转中心旋转后的位置
+			QMatrix4x4 mat;
+			mat.rotate(m_Rotate);
+			QVector3D p = mat * m_Center;
+			m_Model.translate(p - m_Center);
 			//旋转中心向右x轴正方向偏移0.5
-// 			m_Model.translate(m_Center);
+ 			m_Model.translate(m_Center);
  			m_Model.rotate(m_Rotate);
 // 			float theta; QVector3D aisx;
 // 			m_Rotate.getAxisAndAngle(&aisx, &theta);
 // 			cout << "angle:"<<theta << endl;
 // 			cout << " x:" << aisx.x() << " y:" << aisx.y() << " z:" << aisx.z() << endl;
-// 			m_Model.translate(-m_Center);
+ 			m_Model.translate(-m_Center);
 			m_Shader->GetShader()->setUniformValue("model", m_Model);
 
 
 			m_View.setToIdentity();
-			m_View.lookAt(m_Camera.m_CameraPos, m_Camera.m_CameraPos + m_Camera.m_CameraFront, m_Camera.m_CameraUp);
+			m_View.lookAt(m_Camera.m_CameraPos, QVector3D(0,0,0)/*m_Camera.m_CameraPos + m_Camera.m_CameraFront*/, m_Camera.m_CameraUp);
 			m_Shader->GetShader()->setUniformValue("view", m_View);
 
 			//透视投影
@@ -198,6 +204,7 @@ void PaintingWidget::resizeGL(int w, int h)
 
 #define 正x轴 QVector3D(1.0f,0.0f,0.0f)
 #define 正y轴 QVector3D(0.0f,1.0f,0.0f)
+#define 正z轴 QVector3D(0.0f,0.0f,1.0f)
 #define 四元数旋转
 void PaintingWidget::mouseMoveEvent(QMouseEvent *event)
 {
@@ -221,10 +228,10 @@ void PaintingWidget::mouseMoveEvent(QMouseEvent *event)
 
 		yRotate = QQuaternion::fromAxisAndAngle(正y轴, dx);
 		xRotate = QQuaternion::fromAxisAndAngle(正x轴, dy);
-
+		xRotate = QQuaternion::fromAxisAndAngle(正z轴, dy);
 		
-		m_Rotate = yRotate * m_Rotate ;
-
+		//m_Rotate = xRotate * m_Rotate ;
+		m_Rotate = m_Rotate * xRotate ;
 #endif
 
 #ifdef 欧拉角旋转
@@ -277,7 +284,7 @@ void PaintingWidget::keyPressEvent(QKeyEvent *keyEvent)
 	QQuaternion dr(QQuaternion::fromAxisAndAngle(QVector3D(0, 1, 0), 1));
 	switch (keyEvent->key()) {
 	case Qt::Key_Right:
-		//m_Camera.m_CameraPos.setX(m_Camera.m_CameraPos.x() - 0.1f);	
+		m_Camera.m_CameraPos.setX(m_Camera.m_CameraPos.x() - 0.1f);	
 		m_Rotate = dr * m_Rotate;
 		m_View.rotate(10 ,QVector3D(0, 0, 1));
 		break;
